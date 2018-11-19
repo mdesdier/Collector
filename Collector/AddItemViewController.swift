@@ -9,7 +9,7 @@
 import UIKit
 
 class AddItemViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {  //added 'follow uiImagePickerController for delegate'
-
+    
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var itemImageView: UIImageView!
     
@@ -17,7 +17,7 @@ class AddItemViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         imagePicker.delegate = self //delegate looking for class that can handle its situations.
         
@@ -25,6 +25,9 @@ class AddItemViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     @IBAction func cameraTapped(_ sender: Any) {
+        imagePicker.sourceType = .camera //select camera
+        present(imagePicker, animated: true, completion: nil) //present image picker view controller we created to go to photo lib.  completion can be nil or function to call upon completion.
+        
     }
     @IBAction func photosTapped(_ sender: Any) {
         imagePicker.sourceType = .photoLibrary //select photo lib here, not camera
@@ -38,13 +41,28 @@ class AddItemViewController: UIViewController, UIImagePickerControllerDelegate, 
         //get selected image from returned info dictionary
         
         if let chosenImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                itemImageView.image = chosenImage
+            itemImageView.image = chosenImage
         }
         //need to dismiss image picker now that we have selected one
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func AddTapped(_ sender: Any) {
+        if let myContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            let item = Item(entity: Item.entity() , insertInto: myContext)
+          //  let item = Item(context: myContext)
+            
+            item.title = titleTextField.text  //copy title to core data item.
+            if let image = itemImageView.image {
+                if let imageData = image.pngData() {
+                    item.image = imageData
+                }
+            }
+            
+            try? myContext.save()   //save to core data
+            navigationController?.popViewController(animated: true)
+            
+        }
     }
     
 }
