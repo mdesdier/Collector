@@ -51,31 +51,41 @@ class CollectorTableViewController: UITableViewController {
 
         let item = items[indexPath.row] // grab the item for this row from items array we got from core data
         cell.textLabel?.text = item.title
-        
+        if let imageData = item.image {
+             cell.imageView?.image = UIImage(data: imageData) //use UIImage to conver from data to image type then fill cell imageview so cells display an image too
+        }
         
         return cell
     }
     
 
-    /*
+    //uncomment these to allow swipe delete of rows.
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
-        return true
+        return true //returning true so all rows are editable
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            // tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+                let item = items[indexPath.row]
+                context.delete(item)
+                getItems()  //get items from core data into our local array so the deleted item is gone from array too.  BTW getItems does a reloadData so no need to add another here.
+                
+            }
+            print("ask to delete")
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
   
 
