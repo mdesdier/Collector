@@ -27,7 +27,6 @@ class AddItemViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBAction func cameraTapped(_ sender: Any) {
         imagePicker.sourceType = .camera //select camera
         present(imagePicker, animated: true, completion: nil) //present image picker view controller we created to go to photo lib.  completion can be nil or function to call upon completion.
-        
     }
     @IBAction func photosTapped(_ sender: Any) {
         imagePicker.sourceType = .photoLibrary //select photo lib here, not camera
